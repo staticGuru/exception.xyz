@@ -1,6 +1,9 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import { getStrapiMedia, formatDate } from "../utils/api-helpers";
+import { useCallback, useEffect, useState } from "react";
+import { fetchAPI } from "../utils/fetch-api";
 
 interface Article {
   id: 4;
@@ -43,6 +46,13 @@ interface Article {
   };
 }
 
+interface Topics {
+  attributes: {
+    name: string;
+    slug: string;
+  };
+}
+
 export default function PostList({
   data: articles,
   children,
@@ -50,67 +60,118 @@ export default function PostList({
   data: Article[];
   children?: React.ReactNode;
 }) {
+  const [relatedData, setRelatedData] = useState<Topics[]>([]);
+  const fetchCategories = useCallback(async () => {
+    const relatedPath = "/categories";
+    const urlParamsObject = {
+      populate: "*",
+    };
+    const options = {
+      headers: {
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_STRAPI_API_TOKEN}`,
+      },
+    };
+    const responseData = await fetchAPI(relatedPath, urlParamsObject, options);
+    setRelatedData(responseData.data);
+  }, []);
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
   return (
-    <section className="container p-6 mx-auto space-y-6 sm:space-y-12">
-      <div className="grid justify-center grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {articles.map((article) => {
-          const imageUrl = getStrapiMedia(
-            article.attributes.cover.data?.attributes.url
-          );
+    <section className="container w-full p-6 space-y-6 sm:space-y-12">
+      <div className="grid px-2 justify-center grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 ">
+        <div className="flex flex-col col-span-2 overflow-y-auto">
+          {articles.map((article) => {
+            const imageUrl = getStrapiMedia(
+              article.attributes.cover.data?.attributes.url
+            );
 
-          const category = article.attributes.category.data?.attributes;
-          const authorsBio = article.attributes.authorsBio.data?.attributes;
+            const category = article.attributes.category.data?.attributes;
+            const authorsBio = article.attributes.authorsBio.data?.attributes;
 
-          const avatarUrl = getStrapiMedia(
-            authorsBio?.avatar.data.attributes.url
-          );
+            const avatarUrl = getStrapiMedia(
+              authorsBio?.avatar.data.attributes.url
+            );
 
-          return (
-            <Link
-              href={`/blog/${category?.slug}/${article.attributes.slug}`}
-              key={article.id}
-              className="max-w-sm mx-auto group hover:no-underline focus:no-underline dark:bg-gray-900 lg:w-[300px] xl:min-w-[375px] rounded-2xl overflow-hidden shadow-lg"
-            >
-              {imageUrl && (
-                <Image
-                  alt="presentation"
-                  width="240"
-                  height="240"
-                  className="object-cover w-full h-44 "
-                  src={imageUrl}
-                />
-              )}
-              <div className="p-6 space-y-2 relative">
-                {avatarUrl && (
+            return (
+              <Link
+                href={`/blog/${category?.slug}/${article.attributes.slug}`}
+                key={article.id}
+                className="flex justify-between mb-5 px-3 last:mb-0 hover:bg-gray-50"
+                // className=" flex max-w-sm mx-auto group hover:no-underline focus:no-underline dark:bg-gray-900 lg:w-[300px] xl:min-w-[375px] rounded-2xl overflow-hidden shadow-lg"
+              >
+                <div className="flex flex-col w-[75%] float-left justify-between">
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      {avatarUrl && (
+                        <Image
+                          alt="avatar"
+                          width="40"
+                          height="40"
+                          src={avatarUrl}
+                          className="rounded-full h-8 w-8 object-cover"
+                        />
+                      )}
+                      {authorsBio && (
+                        <span className="text-sm font-semibold dark:text-gray-400">
+                          {authorsBio.name}
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="text-2xl font-bold group-hover:underline group-focus:underline">
+                      {article.attributes.title}
+                    </h3>
+                    <p className="py-1 text-base font-light text-slate-600">
+                      {article.attributes.description}
+                    </p>
+                  </div>
+                  <div className="flex justify-start items-center gap-3">
+                    <span className="text-sm dark:text-gray-400">
+                      {formatDate(article.attributes.publishedAt)}
+                    </span>
+                    <Link
+                      href={`/blog/${article.attributes.category.data.attributes.name}`}
+                      className="text-base dark:text-gray-400 text-gray-500 px-3 py-1 rounded-full bg-slate-200"
+                    >
+                      {article.attributes.category.data.attributes.name}
+                    </Link>
+                  </div>
+                </div>
+                {imageUrl && (
                   <Image
-                    alt="avatar"
-                    width="80"
-                    height="80"
-                    src={avatarUrl}
-                    className="rounded-full h-16 w-16 object-cover absolute -top-8 right-4"
+                    alt="presentation"
+                    width="200"
+                    height="134"
+                    className="object-cover w-54 h-44 rounded-md "
+                    src={imageUrl}
                   />
                 )}
-
-                <h3 className="text-2xl font-semibold group-hover:underline group-focus:underline">
-                  {article.attributes.title}
-                </h3>
-
-                <div className="flex justify-between items-center">
-                  <span className="text-xs dark:text-gray-400">
-                    {formatDate(article.attributes.publishedAt)}
-                  </span>
-                  {authorsBio && (
-                    <span className="text-xs dark:text-gray-400">
-                      {authorsBio.name}
-                    </span>
-                  )}
-                </div>
-                <p className="py-4">{article.attributes.description}</p>
-              </div>
-            </Link>
-          );
-        })}
+              </Link>
+            );
+          })}
+        </div>
+        <div className="relative">
+          <div className="sticky top-[10%]">
+            <p>Explore Topics</p>
+            <div className="flex flex-wrap mt-2">
+              {relatedData.map((topic) => {
+                let topicName = topic.attributes.name;
+                let slug = topic.attributes.slug;
+                return (
+                  <Link
+                    href={`/blog/${slug}`}
+                    className="m-1 bg-slate-100 text-base font-normal rounded-full px-4 py-2 hover:bg-slate-300"
+                  >
+                    {topicName}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </div>
       </div>
+
       {children && children}
     </section>
   );
