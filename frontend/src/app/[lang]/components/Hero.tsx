@@ -1,8 +1,11 @@
+"use client";
 import Link from "next/link";
 import Image from "next/image";
 import HighlightedText from "./HighlightedText";
 import { getStrapiMedia } from "../utils/api-helpers";
 import { renderButtonStyle } from "../utils/render-button-style";
+import Lottie from "lottie-react";
+import animationData from "../../../../public/animationData.json";
 
 interface Button {
   id: string;
@@ -66,15 +69,27 @@ export default function Hero({ data }: HeroProps) {
             ))}
           </div>
         </div>
-        <div className="flex items-center justify-center p-6 mt-8 lg:mt-0 h-72 sm:h-80 lg:h-96 xl:h-112 2xl:h-128">
+        <div className="flex relative items-center justify-center p-2 mt-8 lg:mt-0 h-72 sm:h-80 lg:h-96 xl:h-112 2xl:h-128">
+          {/* <div className="border-2 border-sin-wave-animation animate-sin-wave overflow-hidden">
           <Image
             src={imgUrl || ""}
             alt={
               data.picture.data.attributes.alternativeText || "none provided"
             }
-            className="object-contain h-72 sm:h-80 lg:h-96 xl:h-112 2xl:h-128 "
+            className="object-contain border-4 border-transparent rounded-full w-72 sm:w-80 lg:w-96 xl:w-112 2xl:w-128 h-72 sm:h-80 lg:h-96 xl:h-112 2xl:h-128 "
             width={600}
             height={600}
+          />
+          </div> */}
+
+          <Lottie
+            animationData={animationData}
+            // className="flex justify-center items-center w-full h-full"
+            className="object-contain border-4 border-transparent rounded-full w-72 sm:w-80 lg:w-96 xl:w-112 2xl:w-128 h-72 sm:h-80 lg:h-96 xl:h-112 2xl:h-128 "
+            width={600}
+            height={600}
+            style={{ height: "600px", width: "600px" }}
+            loop={true}
           />
         </div>
       </div>
