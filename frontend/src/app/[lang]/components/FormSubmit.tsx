@@ -54,22 +54,22 @@ export default function FormSubmit({
               {successMessage}
             </p>
           ) : (
-            <>
+            <div className="border-2 rounded-md overflow-hidden border-slate-300">
               <input
                 type="email"
                 placeholder={errorMessage || placeholder}
                 onChange={(e) => setEmail(e.target.value)}
                 value={email}
-                className={"w-3/5 p-3 rounded-l-lg sm:w-2/3 text-gray-700"}
+                className={"w-3/5 p-3 outline-none rounded-l-lg sm:w-2/3 text-gray-700"}
               />
               <button
                 type="button"
-                className="w-2/5 p-3 font-semibold rounded-r-lg sm:w-1/3 dark:bg-violet-400 dark:text-gray-900"
+                className="w-2/5 p-3 font-semibold sm:w-1/3 bg-yellow-400 dark:text-gray-900"
                 onClick={handleSubmit}
               >
                 {text}
               </button>
-            </>
+            </div>
           )}
         </div>
 
