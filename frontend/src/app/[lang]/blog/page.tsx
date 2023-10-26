@@ -5,6 +5,7 @@ import { fetchAPI } from "../utils/fetch-api";
 import Loader from "../components/Loader";
 import Blog from "../views/blog-list";
 import PageHeader from "../components/PageHeader";
+import { ALL_TOPICS } from "@/app/constants";
 
 interface Meta {
   pagination: {
@@ -40,11 +41,10 @@ export default function Profile() {
       };
       const options = { headers: { Authorization: `Bearer ${token}` } };
       const responseData = await fetchAPI(path, urlParamsObject, options);
-
       if (start === 0) {
         setData(responseData.data);
       } else {
-        setData((prevData: any[] ) => [...prevData, ...responseData.data]);
+        setData((prevData: any[]) => [...prevData, ...responseData.data]);
       }
 
       setMeta(responseData.meta);
@@ -60,6 +60,8 @@ export default function Profile() {
     fetchData(nextPosts, Number(process.env.NEXT_PUBLIC_PAGE_LIMIT));
   }
 
+
+
   useEffect(() => {
     fetchData(0, Number(process.env.NEXT_PUBLIC_PAGE_LIMIT));
   }, [fetchData]);
@@ -67,15 +69,15 @@ export default function Profile() {
   if (isLoading) return <Loader />;
 
   return (
-    <div>
-      <PageHeader heading="Our Blog" text="Checkout Something Cool" />
-      <Blog data={data}>
+    <>
+      <PageHeader heading="Insights" text="Check Out Something Remarkable" />
+      <Blog data={data} selectedTopic={ALL_TOPICS}>
         {meta!.pagination.start + meta!.pagination.limit <
           meta!.pagination.total && (
           <div className="flex justify-center">
             <button
               type="button"
-              className="px-6 py-3 text-sm rounded-lg hover:underline dark:bg-gray-900 dark:text-gray-400"
+              className="px-6 py-3 text-base font-medium rounded-lg hover:underline dark:bg-gray-900 dark:text-gray-400"
               onClick={loadMorePosts}
             >
               Load more posts...
@@ -83,6 +85,6 @@ export default function Profile() {
           </div>
         )}
       </Blog>
-    </div>
+    </>
   );
 }
