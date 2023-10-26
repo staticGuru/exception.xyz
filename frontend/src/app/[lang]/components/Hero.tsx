@@ -70,25 +70,12 @@ export default function Hero({ data }: HeroProps) {
           </div>
         </div>
         <div className="flex relative items-center justify-center p-2 mt-8 lg:mt-0 h-72 sm:h-80 lg:h-96 xl:h-112 2xl:h-128">
-          {/* <div className="border-2 border-sin-wave-animation animate-sin-wave overflow-hidden">
-          <Image
-            src={imgUrl || ""}
-            alt={
-              data.picture.data.attributes.alternativeText || "none provided"
-            }
-            className="object-contain border-4 border-transparent rounded-full w-72 sm:w-80 lg:w-96 xl:w-112 2xl:w-128 h-72 sm:h-80 lg:h-96 xl:h-112 2xl:h-128 "
-            width={600}
-            height={600}
-          />
-          </div> */}
-
           <Lottie
             animationData={animationData}
-            // className="flex justify-center items-center w-full h-full"
             className="object-contain border-4 border-transparent rounded-full w-72 sm:w-80 lg:w-96 xl:w-112 2xl:w-128 h-72 sm:h-80 lg:h-96 xl:h-112 2xl:h-128 "
             width={600}
             height={600}
-            style={{ height: "600px", width: "600px" }}
+            style={{ height: "35rem", width: "35rem" }}
             loop={true}
           />
         </div>
