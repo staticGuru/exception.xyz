@@ -4,6 +4,7 @@ import Link from "next/link";
 import { getStrapiMedia, formatDate } from "../utils/api-helpers";
 import { useCallback, useEffect, useState } from "react";
 import { fetchAPI } from "../utils/fetch-api";
+import { ALL_TOPICS } from "@/app/constants";
 
 interface Article {
   id: 4;
@@ -50,14 +51,19 @@ interface Topics {
   attributes: {
     name: string;
     slug: string;
+    articles: {
+      data: Array<any>[];
+    };
   };
 }
 
 export default function PostList({
   data: articles,
+  selectedTopic,
   children,
 }: {
   data: Article[];
+  selectedTopic:string;
   children?: React.ReactNode;
 }) {
   const [relatedData, setRelatedData] = useState<Topics[]>([]);
@@ -78,6 +84,11 @@ export default function PostList({
   useEffect(() => {
     fetchCategories();
   }, []);
+  function selectedTopics(current: string) {
+    return current === selectedTopic
+      ? "m-1 bg-slate-500 text-base font-normal rounded-full px-4 py-2 text-white font-semibold"
+      : "m-1 bg-slate-100 text-base font-normal rounded-full px-4 py-2 hover:bg-slate-300";
+  }
   return (
     <section className="container w-full p-6 space-y-6 sm:space-y-12">
       <div className="grid px-2 justify-center grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 ">
@@ -99,7 +110,6 @@ export default function PostList({
                 href={`/blog/${category?.slug}/${article.attributes.slug}`}
                 key={article.id}
                 className="flex justify-between mb-5 px-3 last:mb-0 hover:bg-gray-50"
-                // className=" flex max-w-sm mx-auto group hover:no-underline focus:no-underline dark:bg-gray-900 lg:w-[300px] xl:min-w-[375px] rounded-2xl overflow-hidden shadow-lg"
               >
                 <div className="flex flex-col w-[75%] float-left justify-between">
                   <div>
@@ -152,16 +162,23 @@ export default function PostList({
           })}
         </div>
         <div className="relative">
-          <div className="sticky top-[10%]">
+          <div className="sticky top-[15%]">
             <p>Explore Topics</p>
             <div className="flex flex-wrap mt-2">
+              <Link
+                href={`/blog`}
+                className={selectedTopics(ALL_TOPICS)}
+                >
+                {ALL_TOPICS}
+              </Link>
               {relatedData.map((topic) => {
                 let topicName = topic.attributes.name;
                 let slug = topic.attributes.slug;
+                if (topic.attributes.articles.data.length === 0) return null;
                 return (
                   <Link
                     href={`/blog/${slug}`}
-                    className="m-1 bg-slate-100 text-base font-normal rounded-full px-4 py-2 hover:bg-slate-300"
+                    className={selectedTopics(slug)}
                   >
                     {topicName}
                   </Link>
