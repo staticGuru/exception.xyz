@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Open_Sans } from "next/font/google";
 import "./globals.css";
 import { getStrapiMedia, getStrapiURL } from "./utils/api-helpers";
 import { fetchAPI } from "./utils/fetch-api";
@@ -56,6 +57,10 @@ export async function generateMetadata({
     },
   };
 }
+const inter = Open_Sans({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
 
 export default async function RootLayout({
   children,
@@ -87,11 +92,13 @@ export default async function RootLayout({
           logoText={navbar.navbarLogo.logoText}
         />
 
-        <main className="dark:bg-black dark:text-gray-100 min-h-screen flex flex-col items-center justify-center">
+        <main
+          className={`${inter.variable} font-sans dark:bg-black dark:text-gray-100 min-h-screen flex flex-col items-center justify-center`}
+        >
           {children}
         </main>
 
-        <Banner data={notificationBanner} />
+        <Banner data={{ ...notificationBanner, params }} />
 
         <Footer
           logoUrl={footerLogoUrl}
