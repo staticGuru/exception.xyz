@@ -4,7 +4,14 @@
 @import "react-slideshow-image/dist/styles.css";
 
 body {
-  @apply dark:bg-black
+  @apply dark:bg-black;
+}
+
+
+@layer base {
+  html {
+    font-family: "Proxima Nova", system-ui, sans-serif;
+  }
 }
 
 
@@ -14,27 +21,27 @@ body {
 
 /* Headers */
 .rich-text h1 {
-  @apply text-4xl font-bold mb-4 text-violet-400;
+  @apply text-4xl font-bold mb-4 text-slate-600;
 }
 
 .rich-text h2 {
-  @apply text-3xl font-bold mb-4 text-violet-400;
+  @apply text-3xl font-bold mb-4 text-slate-600;
 }
 
 .rich-text h3 {
-  @apply text-2xl font-bold mb-4 text-violet-400;
+  @apply text-2xl font-bold mb-4 text-slate-600;
 }
 
 .rich-text h4 {
-  @apply text-xl font-bold mb-4 text-violet-400;
+  @apply text-xl font-bold mb-4 text-slate-600;
 }
 
 .rich-text h5 {
-  @apply text-lg font-bold mb-4 text-violet-400;
+  @apply text-lg font-bold mb-4 text-slate-600;
 }
 
 .rich-text h6 {
-  @apply text-base font-bold mb-4 text-violet-200;
+  @apply text-base tracking-wider font-bold mb-4 text-violet-200;
 }
 
 /* Horizontal rules */
@@ -43,12 +50,12 @@ body {
 }
 
 .rich-text a {
-  @apply text-violet-400 underline;
+  @apply text-pink-600 underline;
 }
 
 /* Typographic replacements */
 .rich-text p {
-  @apply mb-4;
+  @apply mb-4 tracking-wide leading-7;
 }
 
 /* Emphasis */
@@ -133,4 +140,39 @@ body {
 
 .react-slideshow-container [aria-label="Next Slide"] {
   margin-right: 1rem;
+}
+
+.background-animate {
+  background-size: 400%;
+
+  -webkit-animation: AnimationName 3s ease infinite;
+  -moz-animation: AnimationName 3s ease infinite;
+  animation: AnimationName 3s ease infinite;
+}
+
+@keyframes AnimationName {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* progress bar container */
+.progress-bar-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--progress-height);
+}
+
+/* progress bar */
+.progress-bar-container__progress {
+  height: var(--progress-height);
+  background-color: var(--progress-color);
+  width: 0%;
+  float: left;
 }
