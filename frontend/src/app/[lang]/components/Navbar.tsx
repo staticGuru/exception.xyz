@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Dialog } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface NavLink {
   id: number;
@@ -24,7 +24,7 @@ function NavLink({ url, text }: NavLink) {
     <li className="flex">
       <Link
         href={url}
-        className={`flex items-center mx-4 -mb-1 border-b-2 dark:border-transparent ${
+        className={`flex font-medium items-center mx-4 -mb-1 dark:border-transparent ${
           path === url && "dark:text-violet-400 dark:border-violet-400"
         }}`}
       >
@@ -64,68 +64,102 @@ export default function Navbar({
   logoText: string | null;
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const path = usePathname();
+
+  useEffect(() => {
+    let splitedPath = path.split("/");
+    if (splitedPath?.[2] === "blog" && splitedPath.length === 5) {
+      window.addEventListener("scroll", updateScrollPosition);
+    } else {
+      setScrollPosition(0);
+      window.removeEventListener("scroll", updateScrollPosition);
+    }
+
+    return () => {
+      window.removeEventListener("scroll", updateScrollPosition);
+    };
+  }, [path]);
+
+  function updateScrollPosition() {
+    const currentPosition = window.scrollY;
+    const pageHeight =
+      document.documentElement.scrollHeight -
+      document.documentElement.clientHeight;
+    const scrollPercentage = (currentPosition / pageHeight) * 100;
+    setScrollPosition(scrollPercentage);
+  }
+
   const closeMenu = () => {
     setMobileMenuOpen(false);
   };
   return (
-    <div className="p-4 sticky bg-white top-0 w-full dark:bg-black dark:text-gray-100">
-      <div className="container flex justify-between h-16 mx-auto px-0 sm:px-6">
-        <Logo src={logoUrl}>
-          {logoText && <h2 className="text-2xl font-bold">{logoText}</h2>}
-        </Logo>
+    <div className="sticky top-0 z-10">
+      <div className="p-4 bg-white top-0 w-full dark:bg-black dark:text-gray-100 border-b-2 border-slate-300">
+        <div className="container flex justify-between h-16 mx-auto px-0 sm:px-6">
+          <Logo src={logoUrl}>
+            {logoText && <h2 className="text-2xl font-bold">{logoText}</h2>}
+          </Logo>
 
-        <div className="items-center flex-shrink-0 hidden lg:flex">
-          <ul className="items-stretch hidden space-x-3 lg:flex">
-            {links.map((item: NavLink) => (
-              <NavLink key={item.id} {...item} />
-            ))}
-          </ul>
-        </div>
+          <div className="items-center flex-shrink-0 hidden lg:flex">
+            <ul className="items-stretch  bg-yellow-400 text-slate-500 px-3 py-3 rounded-md hidden space-x-3 lg:flex">
+              {links.map((item: NavLink) => (
+                <NavLink key={item.id} {...item} />
+              ))}
+            </ul>
+          </div>
 
-        <Dialog
-          as="div"
-          className="lg:hidden"
-          open={mobileMenuOpen}
-          onClose={setMobileMenuOpen}
-        >
-          <div className="fixed inset-0 z-50" />
-          <Dialog.Panel className="fixed inset-y-0 rtl:left-0 ltr:right-0 z-50 w-full overflow-y-auto dark:bg-black px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-100/10">
-            <div className="flex items-center justify-between">
-              <a href="#" className="-m-1.5 p-1.5">
-                <span className="sr-only">Strapi</span>
-                {logoUrl && <img className="h-8 w-auto" src={logoUrl} alt="" />}
-              </a>
-              <button
-                type="button"
-                className="-m-2.5 rounded-md p-2.5 text-gray-100"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <span className="sr-only">Close menu</span>
-                <XMarkIcon className="h-6 w-6" aria-hidden="true" />
-              </button>
-            </div>
-            <div className="mt-6 flow-root">
-              <div className="-my-6 divide-y divide-gray-200/10">
-                <div className="space-y-2 py-6">
-                  {links.map((item) => (
-                    <MobileNavLink
-                      key={item.id}
-                      closeMenu={closeMenu}
-                      {...item}
-                    />
-                  ))}
+          <Dialog
+            as="div"
+            className="lg:hidden"
+            open={mobileMenuOpen}
+            onClose={setMobileMenuOpen}
+          >
+            <div className="fixed inset-0 z-50" />
+            <Dialog.Panel className="fixed inset-y-0 rtl:left-0 ltr:right-0 z-50 w-full overflow-y-auto dark:bg-black px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-100/10">
+              <div className="flex items-center justify-between">
+                <a href="#" className="-m-1.5 p-1.5">
+                  <span className="sr-only">Strapi</span>
+                  {logoUrl && (
+                    <img className="h-8 w-auto" src={logoUrl} alt="" />
+                  )}
+                </a>
+                <button
+                  type="button"
+                  className="-m-2.5 rounded-md p-2.5 text-gray-100"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <span className="sr-only">Close menu</span>
+                  <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                </button>
+              </div>
+              <div className="mt-6 flow-root">
+                <div className="-my-6 divide-y divide-gray-200/10">
+                  <div className="space-y-2 py-6">
+                    {links.map((item) => (
+                      <MobileNavLink
+                        key={item.id}
+                        closeMenu={closeMenu}
+                        {...item}
+                      />
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
-          </Dialog.Panel>
-        </Dialog>
-        <button
-          className="p-4 lg:hidden"
-          onClick={() => setMobileMenuOpen(true)}
-        >
-          <Bars3Icon className="h-7 w-7 text-gray-100" aria-hidden="true" />
-        </button>
+            </Dialog.Panel>
+          </Dialog>
+          <button
+            className="p-4 lg:hidden"
+            onClick={() => setMobileMenuOpen(true)}
+          >
+            <Bars3Icon className="h-7 w-7 text-gray-100" aria-hidden="true" />
+          </button>
+        </div>
       </div>
+      <div
+        className="h-1 bg-pink-500"
+        style={{ width: `${scrollPosition}%` }}
+      ></div>
     </div>
   );
 }
