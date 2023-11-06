@@ -93,7 +93,7 @@ export default async function RootLayout({
         />
 
         <main
-          className={`${inter.variable} font-sans dark:bg-black dark:text-gray-100 min-h-screen flex flex-col items-center justify-center`}
+          className={`${inter.variable} font-sans dark:bg-black dark:text-gray-100 min-h-screen flex flex-col items-center justify-start`}
         >
           {children}
         </main>
