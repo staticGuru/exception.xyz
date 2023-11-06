@@ -1,61 +1,13 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
+
 import { getStrapiMedia, formatDate } from "../utils/api-helpers";
 import { useCallback, useEffect, useState } from "react";
 import { fetchAPI } from "../utils/fetch-api";
 import { ALL_TOPICS } from "@/app/constants";
-
-interface Article {
-  id: 4;
-  attributes: {
-    title: string;
-    description: string;
-    slug: string;
-    createdAt: string;
-    updatedAt: string;
-    publishedAt: string;
-    cover: {
-      data: {
-        attributes: {
-          url: string;
-        };
-      };
-    };
-    category: {
-      data: {
-        attributes: {
-          name: string;
-          slug: string;
-        };
-      };
-    };
-    authorsBio: {
-      data: {
-        attributes: {
-          name: string;
-          avatar: {
-            data: {
-              attributes: {
-                url: string;
-              };
-            };
-          };
-        };
-      };
-    };
-  };
-}
-
-interface Topics {
-  attributes: {
-    name: string;
-    slug: string;
-    articles: {
-      data: Array<any>[];
-    };
-  };
-}
+import { useRouter } from "next/navigation";
+import { Article, Topics } from "../utils/model";
 
 export default function PostList({
   data: articles,
@@ -67,6 +19,8 @@ export default function PostList({
   children?: React.ReactNode;
 }) {
   const [relatedData, setRelatedData] = useState<Topics[]>([]);
+  const router = useRouter();
+
   const fetchCategories = useCallback(async () => {
     const relatedPath = "/categories";
     const urlParamsObject = {
@@ -84,6 +38,7 @@ export default function PostList({
   useEffect(() => {
     fetchCategories();
   }, []);
+
   function selectedTopics(current: string) {
     return current === selectedTopic
       ? "m-1 bg-slate-500 text-base font-normal rounded-full px-4 py-2 text-white font-semibold"
@@ -106,10 +61,10 @@ export default function PostList({
             );
 
             return (
-              <Link
-                href={`/blog/${category?.slug}/${article.attributes.slug}`}
+              <div
+              onClick={()=>router.push(`/blog/${category?.slug}/${article.attributes.slug}`)}
                 key={article.id}
-                className="flex justify-between mb-5 px-3 last:mb-0 hover:bg-gray-50"
+                className="flex justify-between mb-5 px-3 cursor-pointer last:mb-0 hover:bg-gray-50"
               >
                 <div className="flex flex-col w-[75%] float-left justify-between">
                   <div>
@@ -157,7 +112,7 @@ export default function PostList({
                     src={imageUrl}
                   />
                 )}
-              </Link>
+              </div>
             );
           })}
         </div>
