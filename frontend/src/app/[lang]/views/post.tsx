@@ -2,39 +2,7 @@
 import { formatDate, getStrapiMedia } from "@/app/[lang]/utils/api-helpers";
 import { postRenderer } from "@/app/[lang]/utils/post-renderer";
 import Image from "next/image";
-import { useEffect, useState } from "react";
-
-interface Article {
-  id: number;
-  attributes: {
-    title: string;
-    description: string;
-    slug: string;
-    cover: {
-      data: {
-        attributes: {
-          url: string;
-        };
-      };
-    };
-    authorsBio: {
-      data: {
-        attributes: {
-          name: string;
-          avatar: {
-            data: {
-              attributes: {
-                url: string;
-              };
-            };
-          };
-        };
-      };
-    };
-    blocks: any[];
-    publishedAt: string;
-  };
-}
+import { Article } from "../utils/model";
 
 export default function Post({ data }: { data: Article }) {
   const { title, description, publishedAt, cover, authorsBio } =
@@ -45,54 +13,8 @@ export default function Post({ data }: { data: Article }) {
     authorsBio.data?.attributes.avatar.data.attributes.url
   );
 
-
-//   useEffect(() => {
-//     const progressContainerEl = window
-//       ? document.querySelector(".post-container")
-//       : null;
-//     const progressBarEl = window
-//       ? document.querySelector(".progress-bar-container__progress")
-//       : null;
-//     if (window && progressContainerEl && progressBarEl) {
-//       console.log({ progressContainerEl });
-
-//       // function to check scroll position and update scroll progress bar accordingly
-//       const updateScrollProgressBar = () => {
-//         // get full scroll height
-//         const scrollHeight =
-//           progressContainerEl.scrollHeight -
-//           heightInViewport(progressContainerEl);
-//         console.log(scrollHeight);
-//         // get current scroll position
-//         const scrollPosition = progressContainerEl.scrollTop;
-
-//         // get scroll percentage and set width of progress bar
-//         const scrollPercentage = (scrollPosition / scrollHeight) * 100;
-//         progressBarEl.style.width = scrollPercentage + "%";
-//       };
-
-//       // bind window onload and onscroll events to update scroll progress bar width
-//       progressContainerEl.addEventListener("scroll", updateScrollProgressBar);
-//       progressContainerEl.addEventListener("load", updateScrollProgressBar);
-
-//       // function to get visible height in viewport
-//       // some code taken from user Roko C. Buljan on https://stackoverflow.com/questions/24768795/get-the-visible-height-of-a-div-with-jquery
-//       function heightInViewport(el) {
-//         var elH = el.offsetHeight,
-//           H = document.body.offsetHeight,
-//           r = el.getBoundingClientRect(),
-//           t = r.top,
-//           b = r.bottom;
-//         return Math.max(0, t > 0 ? Math.min(elH, H - t) : Math.min(b, H));
-//       }
-//     }
-//   }, [window]);
-
   return (
     <article className="space-y-8 dark:bg-black dark:text-gray-50">
-      {/* <div className="progress-bar-container">
-        <div className="progress-bar-container__progress"></div>
-      </div> */}
       
       <div className="space-y-6">
         <h1 className="leading-tight text-5xl font-bold ">{title}</h1>
