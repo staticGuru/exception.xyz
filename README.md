@@ -1,2 +1,1 @@
-# secondbrain.io
 
